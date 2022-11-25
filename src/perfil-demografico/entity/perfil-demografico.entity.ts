@@ -25,7 +25,7 @@ export class PerfilDemograficoEntity {
   tipoIdentificacion: number;
 
   @Column()
-  numeroIdentificacion: number;
+  numeroIdentificacion: string;
 
   @Column({ enum: Genero })
   genero: string;

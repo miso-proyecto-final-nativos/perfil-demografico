@@ -16,6 +16,6 @@ async function bootstrap() {
   app.startAllMicroservices();
   await app.listen(3060);
   console.info('Microservice perfil-demografico listening on port:', port);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 }
 bootstrap();

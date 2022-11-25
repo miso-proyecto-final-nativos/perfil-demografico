@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsDate,
   IsNotEmpty,
@@ -34,13 +35,14 @@ export class PerfilDemograficoDto {
   @IsNotEmpty()
   tipoIdentificacion: number;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  numeroIdentificacion: number;
+  numeroIdentificacion: string;
 
   @IsString()
   genero: string;
 
+  @Type(() => Date)
   @IsDate()
   @IsOptional()
   fechaNacimiento: Date;
