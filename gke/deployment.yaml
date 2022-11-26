@@ -1,52 +1,26 @@
-# Version del API de Kubernetes
 apiVersion: apps/v1
-# Tipo de elemento
 kind: Deployment
-# Metadatos del elemento
 metadata:
   namespace: development
-  # Nombre
   name: ms-perfil-demografico
-  # Etiqueta del Deployment
   labels:
     app: ms-perfil-demografico
-# Especificaciones del elemento
 spec:
-  replicas: 2
-  # K8s agrupa los elementos del Deployment y los interconecta entre si utilizando etiquetas
-  # Aqui definimos como seleccionar los elementos juntos
+  replicas: 1
   selector:
-    # En este caso va a seleccionar aquellos que coincidan con el nombre del deploy
     matchLabels:
       app: ms-perfil-demografico
-  # En este elemento definimos la politica de actualizacion del despliegue
-  # No esta al alcance de este laboratorio, pero invitamos al lector a consultar mas sobre
-  # tecnicas de actualización de despliegues como Rolling Update y Blue/Green
   strategy:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
     type: RollingUpdate
-  # En esta sección definimos el contenido del pod y declaramos los contenedores
   template:
     metadata:
       labels:
-        # Esta es la etiqueta que se le asigna al pod, debe ser igual al selector (linea 24)
         app: ms-perfil-demografico
     spec:
-      # Declaracion de contenedores
-      # name: Nombre del contenedor
-      # image: Nombre de la imagen, por defecto buscara en Docker Hub o en el repositorio privado
-      #        configurado en K8s
       containers:
-        # - name: esp
-        #   image: gcr.io/endpoints-release/endpoints-runtime:2
-        #   args: [
-        #     "--http_port=8081",
-        #     "--backend=127.0.0.1:3010",
-        #     "--service=sportapp.endpoints.sportapp-miso-grupo6.cloud.goog",
-        #     "--rollout_strategy=managed",
-        #   ]
         - name: contenendor-ms-perfil-demografico
           image: IMAGE
           resources:
@@ -57,8 +31,6 @@ spec:
           ports:
             - containerPort: 3060
             - containerPort: 4060
-          # Variables de entorno
-          # Observe que estamos empleando el valor presente en el secreto, en el secreto debe estar configurada la URL de conexión a la base de datos
           env:
             - name: NODE_ENV
               value: "development"
@@ -125,9 +97,6 @@ spec:
           # Realizar pull siempre a la imagen
           imagePullPolicy: Always
       serviceAccountName: ksa-dev-sportapp
-
-# Vamos a especificar el balanceador de carga en este mismo archivo
-# para ello vamos a crear otro documento separado, esto se hace con el operador "---"
 ---
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
@@ -147,13 +116,11 @@ metadata:
   name: service-ms-perfil-demografico
   annotations:
     cloud.google.com/backend-config: '{"default": "sportapp-perfil-demografico-backendconfig"}'
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
   type: NodePort
   selector:
     app: ms-perfil-demografico
-  # Declaracion y redireccion del trafico por los puertos
-  # En este caso, estamos ocupando el puerto 80 para la conexión HTTP
-  # y lo estamos redirigiendo al 3000 de la red virtual del pod
   ports:
     - protocol: TCP
       port: 80
@@ -166,13 +133,11 @@ metadata:
   name: service-ms-tcp-perfil-demografico
   annotations:
     cloud.google.com/backend-config: '{"default": "sportapp-perfil-demografico-backendconfig"}'
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
   type: NodePort
   selector:
     app: ms-perfil-demografico
-  # Declaracion y redireccion del trafico por los puertos
-  # En este caso, estamos ocupando el puerto 80 para la conexión HTTP
-  # y lo estamos redirigiendo al 3000 de la red virtual del pod
   ports:
     - protocol: TCP
       port: 80
