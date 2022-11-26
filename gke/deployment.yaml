@@ -118,7 +118,7 @@ metadata:
     cloud.google.com/backend-config: '{"default": "sportapp-perfil-demografico-backendconfig"}'
     cloud.google.com/neg: '{"ingress": true}'
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: ms-perfil-demografico
   ports:
@@ -135,7 +135,7 @@ metadata:
     cloud.google.com/backend-config: '{"default": "sportapp-perfil-demografico-backendconfig"}'
     cloud.google.com/neg: '{"ingress": true}'
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: ms-perfil-demografico
   ports:
